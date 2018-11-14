@@ -1,4 +1,5 @@
-import os, time
+import os
+import time
 
 
 def find_git_dir(dir):
@@ -32,7 +33,7 @@ def get_git_info_dir(dir):
         gi["parent_commit"] = ll_parts2[0]
         gi["commit"] = ll_parts2[1]
         unix_time = float(ll_parts2[-2])
-        tz = ll_parts2[-1]
+        # tz = ll_parts2[-1]
         gi["commiter"] = " ".join(ll_parts2[2:-2])
         gi["commit_time"] = time.strftime(
             "%Y-%m-%d %H:%M:%S", time.localtime(unix_time)

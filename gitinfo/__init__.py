@@ -1,1 +1,1 @@
-from core import get_git_info
+from gitinfo import get_git_info

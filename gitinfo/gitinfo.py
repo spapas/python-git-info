@@ -27,7 +27,7 @@ def get_git_info_dir(dir):
         gi = {}
         for line in fl:
             last_line = line
-        ll_parts = last_line.split("\t")
+        ll_parts = last_line.strip().split("\t")
         gi["message"] = ll_parts[1]
         ll_parts2 = ll_parts[0].split()
         gi["parent_commit"] = ll_parts2[0]

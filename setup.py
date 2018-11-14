@@ -14,8 +14,6 @@ setup(
     include_package_data=False,
     packages=find_packages(exclude=['tests.*', 'tests', 'sample', ]),
 
-    install_requires=['six'],
-
     classifiers=[
         'Environment :: Web Environment',
         'Programming Language :: Python',

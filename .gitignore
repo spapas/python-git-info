@@ -63,3 +63,5 @@ target/
 
 *.sqlite3
 *.db
+
+tags*

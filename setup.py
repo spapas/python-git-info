@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name='python-git-info',
     version='0.1.0',
@@ -9,6 +12,8 @@ setup(
     author='Serafeim Papastefanos',
     author_email='spapas@gmail.com',
     license='MIT',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url='https://github.com/spapas/python-git-info/',
     zip_safe=False,
     include_package_data=False,

@@ -32,3 +32,13 @@ will return a dictionary with the following structure if everything works ok or
   }
 ```
 
+## Changes
+
+0.3
+
+* Make it work with '..'
+
+0.2
+
+* Initial
+

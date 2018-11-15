@@ -3,11 +3,12 @@ import time
 
 
 def find_git_dir(dir):
-    gitdir = os.path.join(dir, ".git")
+    absdir = os.path.abspath(dir)
+    gitdir = os.path.join(absdir, ".git")
     if os.path.isdir(gitdir):
         return gitdir
-    parentdir = os.path.dirname(dir)
-    if dir == parentdir:
+    parentdir = os.path.dirname(absdir)
+    if absdir == parentdir:
         # We reached root and found not gitdir
         return None
     return find_git_dir(parentdir)
@@ -38,6 +39,7 @@ def get_git_info_dir(dir):
         gi["commit_time"] = time.strftime(
             "%Y-%m-%d %H:%M:%S", time.localtime(unix_time)
         )
+        gi["gitdir"] = dir
         # TODO: I'll ignore tz for now
 
         return gi

@@ -40,7 +40,7 @@ To parse this, it splits first by <TAB> to get the commit message and then it sp
 
 ## Rationale
 
-This project may seem useless of very useful, depending on the way you deploy to your servers. If you, like me push every changeset to your VCS *before* deploying and then pull the changes from the remote server to actually deploy then you'll find this project priceless: You can easily add the latest commit information to somewhere in your web application so you'll be able to see immediately which changeset is deployed to each server without the need to actually login to the server and do a `git log`.
+This project may seem useless of very useful, depending on the way you deploy to your servers. If you, like me, push every changeset to your VCS *before* deploying and then pull the changes from the remote server to actually deploy then you'll find this project priceless: You can easily add the latest commit information to somewhere in your web application so you'll be able to see immediately which changeset is deployed to each server without the need to actually login to the server and do a `git log`.
 
 ## Changes
 

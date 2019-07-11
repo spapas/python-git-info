@@ -44,6 +44,10 @@ This project may seem useless of very useful, depending on the way you deploy to
 
 ## Changes
 
+0.4
+
+* Add more error checks
+
 0.3
 
 * Make it work with '..'

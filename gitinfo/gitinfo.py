@@ -23,7 +23,10 @@ def get_git_info_dir(dir):
         return
     with open(head_file, "r") as fh:
         data = fh.read().strip()
-        head_parts = data.split(" ")[1].split("/")
+        try: 
+            head_parts = data.split(" ")[1].split("/")
+        except IndexError:
+            return 
     if not head_parts:
         return
     log_file = os.path.join(dir, "logs", *head_parts)

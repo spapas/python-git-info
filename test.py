@@ -24,6 +24,16 @@ class TestMethods(unittest.TestCase):
         # Should work with ..
         ret = get_git_info("..")
         self.assertEqual(ret, None)
+        
+    def test_should_not_crash_with_emtpy_git_dir(self):
+        # The parent directory should *not* have a git file
+        # Should work with ..
+        os.mkdir('test')
+        os.mkdir('test\.git')
+        ret = get_git_info("test")
+        os.rmdir('test\.git')
+        os.rmdir('test')
+        self.assertEqual(ret, None)
 
 
 if __name__ == "__main__":

@@ -16,6 +16,8 @@ def find_git_dir(dir):
 
 def get_git_info_dir(dir):
     head_file = os.path.join(dir, "HEAD")
+    if not os.path.isfile(head_file):
+        return
     head_parts = None
     with open(head_file, "r") as fh:
         data = fh.read().strip()

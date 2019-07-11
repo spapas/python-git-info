@@ -19,12 +19,16 @@ def get_git_info_dir(dir):
     if not os.path.isfile(head_file):
         return
     head_parts = None
+    if not os.path.isfile(head_file):
+        return
     with open(head_file, "r") as fh:
         data = fh.read().strip()
         head_parts = data.split(" ")[1].split("/")
     if not head_parts:
         return
     log_file = os.path.join(dir, "logs", *head_parts)
+    if not os.path.isfile(log_file):
+        return
     last_line = None
     with open(log_file, "r") as fl:
         gi = {}

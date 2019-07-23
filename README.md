@@ -34,15 +34,40 @@ will return a dictionary with the following structure if everything works ok or
 
 ## How it works
 
-This project will return the info from the latest commit of your *current* branch. To do this, it will read the `.git/HEAD` file which contains your current branch (i.e something like `ref: refs/heads/master`). It will then read the file `.git/logs/ + current_head` i.e something like `.git/logs/refs/heads/master` which contains all the history of your current branch and retrieve the *last* line of that file which actually is the current changeset. This line has the following format: `parent-changeset current-changeset commiter unix-epoch-datetime<TAB>commit-message`, something like `2f038260609c15e86bcd8b3cef7b9ae9948e83f8 dea9676f779dbf487be88d9cd363de63c215e88f Serafeim Papastefanos <spapas@gmail.com> 1542266248 +0200     commit: Make it work with rel path`. 
+This project will return the info from the latest commit of your *current* branch. To do this, it will read the `.git/HEAD` file which contains your current branch (i.e something like `ref: refs/heads/master`). It will then read the file it found there (i.e `.git/refs/heads/master`) to retrieve the actual sha of the latest commit, something like `8f6223c849d4bba75f037aeeb8660d9e6e306862`. 
 
-To parse this, it splits first by tab to get the commit message and then it splits the first part by space to retrieve the rest of the information.
+This object is located in`.git/objects/8f/6223c849d4bba75f037aeeb8660d9e6e306862` (notice
+the first two characters are a directory name and the rest is the actual filename). This
+is a zlib compressed folder. After it is uncompressed it has a simple format; I'm
+copying from the git internals manual:
+
+> The format for a commit object is simple: it specifies the top-level tree for the snapshot of the project at that point; the parent commits if any (the commit object described above does not have any parents); the author/committer information (which uses your user.name and user.email configuration settings and a timestamp); a blank line, and then the commit message.
+
+So a sample commit message file would be something like this:
+
+```
+tree fa077d18fe3309aa12791dad2f733bfbb50fdee6
+parent 943f6e8e3641ea38a9d9db3256944b46bcfc1f77
+author Serafeim Papastefanos <spapas@example.com> 1562836041 +0300
+committer Serafeim Papastefanos <spapas@example.com> 1562836041 +0300
+
+prep new ver
+```
 
 ## Rationale
 
 This project may seem useless or very useful, depending on the way you deploy to your servers. If you, like me, push every changeset to your VCS *before* deploying and then pull the changes from the remote server to actually deploy then you'll find this project priceless: You can easily add the latest commit information to somewhere in your web application so you'll be able to see immediately which changeset is deployed to each server without the need to actually login to the server and do a `git log`.
 
+Also it is important to add here that this project is pure python and does not have
+any external dependencies (not even `git`); making it very easy to install and 
+use in any project.
+
 ## Changes
+
+0.5
+
+* Change the parsing algorithm from using `.git/logs` to parse the real commit object inside the `.git/objects` folder.
+
 
 0.4
 

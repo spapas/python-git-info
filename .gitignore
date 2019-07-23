@@ -65,3 +65,4 @@ target/
 *.db
 
 tags*
+.vscode*

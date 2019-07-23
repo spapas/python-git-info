@@ -19,4 +19,61 @@ def convert_commit_to_bytes(commit):
 
 def get_pack_info(idx_file, gi):
     idx_file_name = (os.path.splitext(os.path.basename(idx_file))[0])
+    head_commit_bytes = convert_commit_to_bytes(gi['commit'])
+    pack_idx = -1 
+    with  open(idx_file, "rb") as fin:
+        fin.seek(1028, 0)
+
+        tot_obj = struct.unpack('!I', fin.read(4))[0]
+        print(f"Total objects is {tot_obj}")
+
+        found = False
+        idx = 0 
+        # TODO: This can be improved using binary search instead of seq seach... 
+        while(not found):
+            inp=(fin.read(20))
+
+            if inp == head_commit_bytes:
+                found = True
+                print("Found at idx {0}".format(idx))
+                break
+
+            idx+=1
+        
+        if not idx:
+            return
+
+        correct_idx = 1032 + tot_obj*20 + tot_obj*4 + 4*idx
+        fin.seek(correct_idx, 0)
+        pack_idx = struct.unpack('!I', fin.read(4))[0]
+        print(f"PACK IDX IS {pack_idx}")
+
+    pack_file = idx_file[0:-3]+"pack"
+    print(f"PACK FILE IS {pack_file}")
+    with open(pack_file, "rb") as fin:
+        fin.seek(pack_idx, 0)
+
+        b0 = fin.read(1)
+        i0 = int.from_bytes(b0, byteorder='little') 
+
+        if not (i0 & 0x70) >> 4 == 1:
+            print("ERR")
+            a+=1
+
+        l0 = i0 & 0x0f
+        print(f"L0 is {l0}")
+
+        b1 = fin.read(1)
+        i1 = int.from_bytes(b1, byteorder='little') 
+        print (b0, l0, b1, i1)
+
+        l = (l0 << 4) + i1
+        print(f"LEN IS {l}")
+
+        print(zlib.decompress(fin.read(l)))
+
+
+            
+        
+
 

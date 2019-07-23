@@ -1,6 +1,11 @@
+import glob
 import os
 import time
 import zlib
+import struct
+import zlib
+
+from gitinfo.pack_reader import  get_pack_info
 
 
 def find_git_dir(directory):
@@ -86,8 +91,6 @@ def parse_git_message(data, gi):
             gi["author"] = author
             gi["author_date"] = author_time
 
-    
-
     return gi
 
 def get_git_info_dir(directory):
@@ -100,22 +103,26 @@ def get_git_info_dir(directory):
     head_message_file = os.path.join(
         directory, "objects", head_message_folder, head_message_filename
     )
+    
+    gi = {"commit": head_commit, "gitdir": directory, "message": ""}
 
     if not os.path.isfile(head_message_file):
-        return
+        # Here we open the snake bucket of idx+pack
+        object_path = os.path.join(directory, "objects", "pack")
+        for idx_file in glob.glob(object_path + "/*.idx"):
+            get_pack_info(idx_file, gi)
 
-    with open(head_message_file, "rb") as fl:
-        data = zlib.decompress(fl.read())
-        if not data[:6] == b"commit":
-            # Not a commit object for some reason...
-            return
-        # Retrieve the null_byte_idx and start from there
-        null_byte_idx = data.index(b"\x00") + 1
-        data = data[null_byte_idx:]
-        
-        gi = {"commit": head_commit, "gitdir": directory, "message": ""}
-
-        return parse_git_message(data, gi)
+    else:
+        with open(head_message_file, "rb") as fl:
+            data = zlib.decompress(fl.read())
+            if not data[:6] == b"commit":
+                # Not a commit object for some reason...
+                return
+            # Retrieve the null_byte_idx and start from there
+            null_byte_idx = data.index(b"\x00") + 1
+            data = data[null_byte_idx:]
+            
+            return parse_git_message(data, gi)
 
         
 

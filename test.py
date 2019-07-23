@@ -35,6 +35,11 @@ class TestMethods(unittest.TestCase):
             ret = get_git_info("empty_git")
             self.assertEqual(ret, None)
 
+    def test_packed(self):
+        ret = get_git_info('../../c/git')
+        self.assertTrue("commit" in ret)
+        self.assertTrue("message" in ret)
+
 
 if __name__ == "__main__":
     unittest.main()

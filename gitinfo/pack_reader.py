@@ -40,8 +40,11 @@ def get_pack_info(idx_file, gi):
                 break
 
             idx+=1
+            if idx > tot_obj:
+                break
+
         
-        if not idx:
+        if not found:
             return
 
         correct_idx = 1032 + tot_obj*20 + tot_obj*4 + 4*idx

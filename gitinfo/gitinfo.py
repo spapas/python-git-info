@@ -3,9 +3,9 @@ import time
 import zlib
 
 
-def find_git_dir(dir):
+def find_git_dir(directory):
     "Find the correct git dir; move upwards if .git folder is not found here"
-    absdir = os.path.abspath(dir)
+    absdir = os.path.abspath(directory)
     gitdir = os.path.join(absdir, ".git")
     if os.path.isdir(gitdir):
         return gitdir
@@ -17,6 +17,8 @@ def find_git_dir(dir):
 
 
 def parse_commiter_line(line):
+    #print(line)
+    #print("~")
     "Parse the commiter/author line which also contains a datetime"
     parts = line.split()
     # TODO: I'll ignore tz for now It is parts[:-1]
@@ -26,9 +28,9 @@ def parse_commiter_line(line):
     return commiter, commit_time
 
 
-def get_head_commit(dir):
+def get_head_commit(directory):
     "Retrieve the HEAD commit of this repo had"
-    head_file = os.path.join(dir, "HEAD")
+    head_file = os.path.join(directory, "HEAD")
     if not os.path.isfile(head_file):
         return
     head_parts = None
@@ -43,7 +45,7 @@ def get_head_commit(dir):
     if not head_parts:
         return
 
-    head_ref_file = os.path.join(dir, *head_parts)
+    head_ref_file = os.path.join(directory, *head_parts)
     if not os.path.isfile(head_ref_file):
         return
     head_commit = None
@@ -51,15 +53,52 @@ def get_head_commit(dir):
         head_commit = fl.read().strip()
         return head_commit
 
-def get_git_info_dir(dir):
-    head_commit = get_head_commit(dir)
+
+def parse_git_message(data, gi):
+    lines = data.decode("utf-8").split("\n")
+    reading_pgp = False
+    reading_msg = False
+
+    for l in lines:
+        if l == "":
+            reading_pgp = False
+            reading_msg = True
+            continue
+
+        if reading_pgp == True:
+            continue
+
+        if reading_msg == True:
+            gi["message"] += l
+
+        if l.startswith("tree"):
+            gi["tree"] = l.split()[1]
+        elif l.startswith("parent"):
+            gi["parent"] = l.split()[1]
+        elif l.startswith("gpgsig"):
+            reading_pgp = True
+        elif l.startswith("commiter"):
+            commiter, commit_time = parse_commiter_line(l)
+            gi["commiter"] = commiter
+            gi["commit_date"] = commit_time
+        elif l.startswith("author"):
+            author, author_time = parse_commiter_line(l)
+            gi["author"] = author
+            gi["author_date"] = author_time
+
+    
+
+    return gi
+
+def get_git_info_dir(directory):
+    head_commit = get_head_commit(directory)
     if not head_commit:
         return
 
     head_message_folder = head_commit[:2]
     head_message_filename = head_commit[2:]
     head_message_file = os.path.join(
-        dir, "objects", head_message_folder, head_message_filename
+        directory, "objects", head_message_folder, head_message_filename
     )
 
     if not os.path.isfile(head_message_file):
@@ -73,43 +112,12 @@ def get_git_info_dir(dir):
         # Retrieve the null_byte_idx and start from there
         null_byte_idx = data.index(b"\x00") + 1
         data = data[null_byte_idx:]
+        
+        gi = {"commit": head_commit, "gitdir": directory, "message": ""}
 
-        lines = data.decode("utf-8").split("\n")
-        reading_pgp = False
-        reading_msg = False
+        return parse_git_message(data, gi)
 
-        gi = {"commit": head_commit, "message": ""}
-
-        for l in lines:
-            if l == "":
-                reading_pgp = False
-                reading_msg = True
-                continue
-
-            if reading_pgp == True:
-                continue
-
-            if reading_msg == True:
-                gi["message"] += l
-
-            if l.startswith("tree"):
-                gi["tree"] = l.split()[1]
-            elif l.startswith("parent"):
-                gi["parent"] = l.split()[1]
-            elif l.startswith("gpgsig"):
-                reading_pgp = True
-            elif l.startswith("commiter"):
-                commiter, commit_time = parse_commiter_line(l)
-                gi["commiter"] = commiter
-                gi["commit_date"] = commit_time
-            elif l.startswith("author"):
-                author, author_time = parse_commiter_line(l)
-                gi["author"] = author
-                gi["author_date"] = author_time
-
-        gi["gitdir"] = dir
-
-        return gi
+        
 
 
 def get_git_info(dir=os.getcwd()):

@@ -1,11 +1,11 @@
 import glob
 import os
-import time
 import zlib
 import struct
 import zlib
 
 from gitinfo.pack_reader import  get_pack_info
+from gitinfo.helpers import parse_git_message
 
 
 def find_git_dir(directory):
@@ -20,17 +20,6 @@ def find_git_dir(directory):
         return None
     return find_git_dir(parentdir)
 
-
-def parse_commiter_line(line):
-    #print(line)
-    #print("~")
-    "Parse the commiter/author line which also contains a datetime"
-    parts = line.split()
-    # TODO: I'll ignore tz for now It is parts[:-1]
-    unix_time = float(parts[-2])
-    commiter = " ".join(parts[1:-2])
-    commit_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(unix_time))
-    return commiter, commit_time
 
 
 def get_head_commit(directory):
@@ -59,40 +48,6 @@ def get_head_commit(directory):
         return head_commit
 
 
-def parse_git_message(data, gi):
-    lines = data.decode("utf-8").split("\n")
-    reading_pgp = False
-    reading_msg = False
-
-    for l in lines:
-        if l == "":
-            reading_pgp = False
-            reading_msg = True
-            continue
-
-        if reading_pgp == True:
-            continue
-
-        if reading_msg == True:
-            gi["message"] += l
-
-        if l.startswith("tree"):
-            gi["tree"] = l.split()[1]
-        elif l.startswith("parent"):
-            gi["parent"] = l.split()[1]
-        elif l.startswith("gpgsig"):
-            reading_pgp = True
-        elif l.startswith("commiter"):
-            commiter, commit_time = parse_commiter_line(l)
-            gi["commiter"] = commiter
-            gi["commit_date"] = commit_time
-        elif l.startswith("author"):
-            author, author_time = parse_commiter_line(l)
-            gi["author"] = author
-            gi["author_date"] = author_time
-
-    return gi
-
 def get_git_info_dir(directory):
     head_commit = get_head_commit(directory)
     if not head_commit:
@@ -110,7 +65,7 @@ def get_git_info_dir(directory):
         # Here we open the snake bucket of idx+pack
         object_path = os.path.join(directory, "objects", "pack")
         for idx_file in glob.glob(object_path + "/*.idx"):
-            get_pack_info(idx_file, gi)
+            return get_pack_info(idx_file, gi)
 
     else:
         with open(head_message_file, "rb") as fl:

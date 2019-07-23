@@ -2,6 +2,7 @@ import struct
 import binascii
 import zlib
 import os
+from gitinfo.helpers import parse_git_message
 
 # Very useful info for pack and index files:  https://codewords.recurse.com/issues/three/unpacking-git-packfiles
 
@@ -70,7 +71,8 @@ def get_pack_info(idx_file, gi):
         l = (l0 << 4) + i1
         print(f"LEN IS {l}")
 
-        print(zlib.decompress(fin.read(l)))
+        data = zlib.decompress(fin.read(l))
+        return parse_git_message(data, gi)
 
 
             

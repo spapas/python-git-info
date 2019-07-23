@@ -4,8 +4,9 @@ import zlib
 import struct
 import zlib
 
-from gitinfo.pack_reader import  get_pack_info
-from gitinfo.helpers import parse_git_message
+
+from .pack_reader import get_pack_info
+from .helpers import parse_git_message
 
 
 def find_git_dir(directory):

@@ -2,7 +2,7 @@ import struct
 import binascii
 import zlib
 import os
-from gitinfo.helpers import parse_git_message
+from .helpers import parse_git_message
 
 # Very useful info for pack and index files:  https://codewords.recurse.com/issues/three/unpacking-git-packfiles
 
@@ -26,7 +26,7 @@ def get_pack_info(idx_file, gi):
         fin.seek(1028, 0)
 
         tot_obj = struct.unpack('!I', fin.read(4))[0]
-        print(f"Total objects is {tot_obj}")
+        print("Total objects is {0}".format(tot_obj))
 
         found = False
         idx = 0 
@@ -47,10 +47,10 @@ def get_pack_info(idx_file, gi):
         correct_idx = 1032 + tot_obj*20 + tot_obj*4 + 4*idx
         fin.seek(correct_idx, 0)
         pack_idx = struct.unpack('!I', fin.read(4))[0]
-        print(f"PACK IDX IS {pack_idx}")
+        print("PACK IDX IS ".format(pack_idx))
 
     pack_file = idx_file[0:-3]+"pack"
-    print(f"PACK FILE IS {pack_file}")
+    print("PACK FILE IS  ".format(pack_file))
     with open(pack_file, "rb") as fin:
         fin.seek(pack_idx, 0)
 
@@ -62,14 +62,12 @@ def get_pack_info(idx_file, gi):
             a+=1
 
         l0 = i0 & 0x0f
-        print(f"L0 is {l0}")
 
         b1 = fin.read(1)
         i1 = int.from_bytes(b1, byteorder='little') 
         print (b0, l0, b1, i1)
 
         l = (l0 << 4) + i1
-        print(f"LEN IS {l}")
 
         data = zlib.decompress(fin.read(l))
         return parse_git_message(data, gi)

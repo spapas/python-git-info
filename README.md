@@ -27,7 +27,9 @@ will return a dictionary with the following structure if everything works ok or
     'parent_commit': 'd54743b6e7cf9dc36354fe2907f2f415b9988198', 
     'message': 'commit: Small restructuring\n', 
     'commiter': 'Serafeim <email@email.com>', 
-    'commit_time': '2018-11-14 13:52:34', 
+    'commit_date': '2018-11-14 13:52:34', 
+    'author': 'Serafeim <email@email.com>', 
+    'author_date': '2018-11-14 13:52:34', 
     'commit': '9e1eec364ad24df153ca36d1da8405bb6379e03b'
   }
 ```

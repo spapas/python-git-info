@@ -95,11 +95,11 @@ def get_git_info_dir(dir):
             elif l.startswith('commiter'):
                 commiter, commit_time = parse_commiter_line(l)
                 gi["commiter"] = commiter
-                gi["commit_time"] = commit_time
+                gi["commit_date"] = commit_time
             elif l.startswith('author'):
                 author, author_time = parse_commiter_line(l)
                 gi["author"] = author
-                gi["author_time"] = author_time
+                gi["author_date"] = author_time
 
         gi["gitdir"] = dir
         

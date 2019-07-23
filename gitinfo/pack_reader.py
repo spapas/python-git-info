@@ -14,6 +14,8 @@ def chunks(l, n):
 
 def convert_commit_to_bytes(commit):
     c = map(lambda z: int(z, 16), chunks(commit, 2))
+    # Python 2
+    #bc = bytes(bytearray(c))
     bc = bytes(c)
     return bc 
 
@@ -33,8 +35,9 @@ def get_pack_info(idx_file, gi):
         # TODO: This can be improved using binary search instead of seq seach... 
         while(not found):
             inp=(fin.read(20))
-
+            #print(inp, head_commit_bytes)
             if inp == head_commit_bytes:
+
                 found = True
                 print("Found at idx {0}".format(idx))
                 break
@@ -50,10 +53,10 @@ def get_pack_info(idx_file, gi):
         correct_idx = 1032 + tot_obj*20 + tot_obj*4 + 4*idx
         fin.seek(correct_idx, 0)
         pack_idx = struct.unpack('!I', fin.read(4))[0]
-        print("PACK IDX IS ".format(pack_idx))
+        print("PACK IDX IS {0}".format(pack_idx))
 
     pack_file = idx_file[0:-3]+"pack"
-    print("PACK FILE IS  ".format(pack_file))
+    print("PACK FILE IS {0}".format(pack_file))
     with open(pack_file, "rb") as fin:
         fin.seek(pack_idx, 0)
 

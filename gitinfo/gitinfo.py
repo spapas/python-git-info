@@ -16,6 +16,7 @@ def find_git_dir(dir):
 
 def parse_commiter_line(line):
     parts = line.split()
+    # TODO: I'll ignore tz for now It is parts[:-1]
     unix_time = float(parts[-2])
     commiter = ' '.join(parts[1:-2])
     commit_time = time.strftime(
@@ -101,8 +102,7 @@ def get_git_info_dir(dir):
                 gi["author_time"] = author_time
 
         gi["gitdir"] = dir
-        # TODO: I'll ignore tz for now
-        print(gi)
+        
 
         return gi
 

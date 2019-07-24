@@ -7,7 +7,7 @@ from .helpers import parse_git_message
 
 # Very useful info for pack and index files: https://codewords.recurse.com/issues/three/unpacking-git-packfiles
 
-# Take from here https://stackoverflow.com/a/312464/119071
+# Taken from here https://stackoverflow.com/a/312464/119071
 def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]

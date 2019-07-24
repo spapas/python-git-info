@@ -56,6 +56,18 @@ committer Serafeim Papastefanos <spapas@example.com> 1562836041 +0300
 prep new ver
 ```
 
+## The "pack" of snakes
+
+Until now everything seems like sunshine; unfortunately there's a can of snakes in this process or better a `pack` of snakes: Non trivial git repositories will
+compress the contents of their `.git/objects` folder to save network (and disk) space to a file ending with `.pack`. This file is a dump of all the (zlib compressed)
+object your repository contains (including the commit messages of course) and is accompanied by a `.idx` object which says where each object can be found in the 
+pack file. You can find these files in `.git/objects/pack`  folder (if your repository has them of course). 
+
+In any case, the process of reading the `.idx` file to find the index of your commit and then reading that from the `.pack` file is not trivial; if you want
+to learn more about it you can check out this excellent resource: https://codewords.recurse.com/issues/three/unpacking-git-packfiles
+
+Or you can take a look at my code at the `pack_reader` module which I tried to heavily commit to improve understanding.
+
 ## Rationale
 
 This project may seem useless or very useful, depending on the way you deploy to your servers. If you, like me, push every changeset to your VCS *before* deploying and then pull the changes from the remote server to actually deploy then you'll find this project priceless: You can easily add the latest commit information to somewhere in your web application so you'll be able to see immediately which changeset is deployed to each server without the need to actually login to the server and do a `git log`.
@@ -65,6 +77,10 @@ any external dependencies (not even `git`); making it very easy to install and
 use in any project.
 
 ## Changes
+
+0.6
+
+* It now parses the pack file to retrieve the commit object if it is packed!
 
 0.5
 

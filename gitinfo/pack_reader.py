@@ -15,9 +15,8 @@ def chunks(l, n):
 
 def convert_commit_to_bytes(commit):
     c = map(lambda z: int(z, 16), chunks(commit, 2))
-    # Python 2
-    #bc = bytes(bytearray(c))
-    bc = bytes(c)
+    # Works with both py 2 and 3
+    bc = bytes(bytearray(c))
     return bc 
 
 
@@ -42,7 +41,6 @@ def get_pack_idx(idx_file, commit):
         # TODO: This can be improved using binary search instead of seq seach... 
         while(idx <= tot_obj):
             inp=(fin.read(20))
-            print (inp, head_commit_bytes)
             if inp == head_commit_bytes:
                 found = True
                 break

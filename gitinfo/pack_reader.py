@@ -34,7 +34,7 @@ def get_pack_idx(idx_file, commit):
         fin.seek(1028, 0)
 
         tot_obj = struct.unpack('!I', fin.read(4))[0]
-        print("Total objects is {0}".format(tot_obj))
+        # print("Total objects is {0}".format(tot_obj))
 
         found = False
         idx = 0 
@@ -105,7 +105,6 @@ def get_pack_info(idx_file, gi):
 
         
         obj_len = int(codecs.encode(bytes(len_barr), 'hex'), 16)
-        print(obj_len)
 
         data = zlib.decompress(fin.read(obj_len))
         return parse_git_message(data, gi)

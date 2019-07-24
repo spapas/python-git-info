@@ -78,6 +78,10 @@ use in any project.
 
 ## Changes
 
+0.6.1
+
+* Remove non-needed print stmts
+
 0.6
 
 * It now parses the pack file to retrieve the commit object if it is packed!

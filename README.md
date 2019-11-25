@@ -6,7 +6,7 @@ This package does not have any dependencies; it reads directly the data from the
 
 ## Installation
 
-Just do a `pip install gitinfo`, or copy the `gitinfo/gitinfo.py` file to your
+Just do a `pip install python-git-info`, or copy the `gitinfo/gitinfo.py` file to your
 project directly. This project should work with both python 2.7 and 3.x.
 
 ## Usage

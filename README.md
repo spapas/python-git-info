@@ -66,7 +66,7 @@ pack file. You can find these files in `.git/objects/pack`  folder (if your repo
 In any case, the process of reading the `.idx` file to find the index of your commit and then reading that from the `.pack` file is not trivial; if you want
 to learn more about it you can check out this excellent resource: https://codewords.recurse.com/issues/three/unpacking-git-packfiles
 
-Or you can take a look at my code at the `pack_reader` module which I tried to heavily commit to improve understanding.
+Or you can take a look at my code at the `pack_reader` module which I tried to heavily comment to improve understanding.
 
 ## Rationale
 

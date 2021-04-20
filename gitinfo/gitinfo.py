@@ -26,17 +26,24 @@ def find_git_dir(directory):
 def get_head_commit(directory):
     "Retrieve the HEAD commit of this repo had"
     head_file = os.path.join(directory, "HEAD")
+    
     if not os.path.isfile(head_file):
         return
+    
     head_parts = None
+    
     if not os.path.isfile(head_file):
+        
         return
+    
     with open(head_file, "r") as fh:
         data = fh.read().strip()
+        
         try:
             head_parts = data.split(" ")[1].split("/")
         except IndexError:
-            return
+            # The head may contain just a commit so let's return it in that case:
+            return data
     if not head_parts:
         return
 
@@ -51,6 +58,7 @@ def get_head_commit(directory):
 
 def get_git_info_dir(directory):
     head_commit = get_head_commit(directory)
+    
     if not head_commit:
         return
 
@@ -66,7 +74,10 @@ def get_git_info_dir(directory):
         # Here we open the snake bucket of idx+pack
         object_path = os.path.join(directory, "objects", "pack")
         for idx_file in glob.glob(object_path + "/*.idx"):
-            return get_pack_info(idx_file, gi)
+            r = get_pack_info(idx_file, gi)
+            if not r:
+                continue
+            return r
 
     else:
         with open(head_message_file, "rb") as fl:

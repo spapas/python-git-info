@@ -47,7 +47,7 @@ def get_pack_idx(idx_file, commit):
             idx+=1
         
         if not found:
-            return
+            return None, None
 
         # Ok here we've found the index of our commit in the file. Let's get
         # its index in the pack file: The index file is something like:
@@ -62,8 +62,95 @@ def get_pack_idx(idx_file, commit):
         # print("PACK IDX IS {0}".format(pack_idx))
         return pack_idx, tot_obj
 
+def read_len(fin, byte0):
+    len_barr = bytearray()
+    len_barr.append(byte0 & 0x0f)
+
+    # read the rest of the bytes of the length
+    while(True):
+        byt = struct.unpack('B', fin.read(1))[0]
+        if (byt & 0x80): # MSB is 1 we need to reread
+            len_barr.append(byt & 0x7f)
+        else:
+            len_barr.append(byt)
+            break
+    return int(codecs.encode(bytes(len_barr), 'hex'), 16)
+
+def read_len_from_bytes(array):
+    len_barr = bytearray()
+    # read the rest of the bytes of the length
+    c = 0 
+    while(True):
+        byt = array[c]
+        c+=1
+        if (byt & 0x80): # MSB is 1 we need to reread
+            len_barr.append(byt & 0x7f)
+        else:
+            len_barr.append(byt)
+            break
+    return array[c:], int(codecs.encode(bytes(len_barr), 'hex'), 16)    
+
+def decode_delta(fin, data, r, pack_idx, offset):
+    d0 = data[0]
+    a+=1
+    if(d0 & 0x80):
+        # Copy data from other object
+        oo = get_object(fin, pack_idx - offset )
+        data = data[1:]
+        
+        offset = data[0]
+        size = data[1]
+        print("KKK")
+        print(offset, size)
+        
+        r+=oo[offset:offset+size]
+
+        data = data[2:]
+    else:
+        # Insert raw data
+        l = d0&0x7f
+        dti = data[1:1+l]
+        r+=dti
+        data = data[1+l:]
+ 
+    return data, r
+
+def get_object(fin, pack_idx):
+    fin.seek(pack_idx, 0)
+
+    # Read the 1st byte
+    byte0 = struct.unpack('B', fin.read(1))[0]
+    # Make sure this is a commit object or an ofs delta
+    if not (byte0 & 0x70) >> 4 in [1, 6]:
+        return 
+
+    if (byte0 & 0x70) >> 4 == 1: # OBJ_COMMIT 
+        obj_len = read_len(fin, byte0)
+        data = zlib.decompress(fin.read(obj_len))
+        return data
+    elif (byte0 & 0x70) >> 4 == 6: # OBJ_OFS_DELTA 
+        obj_len = read_len(fin, byte0)
+        byte0 = struct.unpack('B', fin.read(1))[0]
+        offset = read_len(fin, byte0)
+        data = zlib.decompress(fin.read(obj_len))
+
+        # Read lengths (won't be used for now)
+        data, l1 = read_len_from_bytes(data)
+        data, l2 = read_len_from_bytes(data)
+        
+        # Decode the delta into the delta_res variable
+        delta_res = b''
+        while(len(data)):
+            data, r = decode_delta(fin, data, delta_res, pack_idx, offset)
+
+        return delta_res
+    else:
+        raise NotImplementedError("Not implemented yet!")
+        
+
 def get_pack_info(idx_file, gi):
     # Retrieve idx of our commit info in the pack file
+    
     pack_idx, index_tot_objects = get_pack_idx(idx_file, gi['commit'])
     if not pack_idx:
         return 
@@ -81,36 +168,6 @@ def get_pack_info(idx_file, gi):
         pack_total_objects = struct.unpack('!I', fin.read(4))[0]
         if index_tot_objects != pack_total_objects:
             return
+        data = get_object(fin, pack_idx)
 
-        # Ok let's go to the index of the object
-        fin.seek(pack_idx, 0)
-
-        # Read the 1st byte
-        byte0 = struct.unpack('B', fin.read(1))[0]
-        # Make sure this is a commit object
-        if not (byte0 & 0x70) >> 4 == 1:
-            return 
-
-        len_barr = bytearray()
-        len_barr.append(byte0 & 0x0f)
-
-        # read the rest of the bytes of the length
-        while(True):
-            byt = struct.unpack('B', fin.read(1))[0]
-            if (byt & 0x80): # MSB is 1 we need to reread
-                len_barr.append(byt & 0x7f)
-            else:
-                len_barr.append(byt)
-                break 
-
-        
-        obj_len = int(codecs.encode(bytes(len_barr), 'hex'), 16)
-
-        data = zlib.decompress(fin.read(obj_len))
         return parse_git_message(data, gi)
-
-
-            
-        
-
-

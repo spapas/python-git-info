@@ -17,9 +17,8 @@ def parse_git_message(data, gi):
     lines = data.decode("utf-8").split("\n")
     reading_pgp = False
     reading_msg = False
-
-    for l in lines:
-        if l == "":
+    for idx, l in enumerate(lines):
+        if l == "" and not reading_msg:
             reading_pgp = False
             reading_msg = True
             continue
@@ -29,6 +28,8 @@ def parse_git_message(data, gi):
 
         if reading_msg == True:
             gi["message"] += l
+            if not l and idx < len(lines)-1:
+                gi['message']+='\n'
 
         if l.startswith("tree"):
             gi["tree"] = l.split()[1]

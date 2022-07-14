@@ -77,6 +77,10 @@ use in any project.
 
 ## Changes
 
+0.7.2
+
+* Fix endianess bug
+
 0.7.1
 
 * Improve parsing of multi-line messages

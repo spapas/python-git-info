@@ -63,18 +63,22 @@ def get_pack_idx(idx_file, commit):
         return pack_idx, tot_obj
 
 def read_len(fin, byte0):
+
     len_barr = bytearray()
     len_barr.append(byte0 & 0x0f)
 
     # read the rest of the bytes of the length
     while(True):
         byt = struct.unpack('B', fin.read(1))[0]
+        print(byt)
         if (byt & 0x80): # MSB is 1 we need to reread
+            print("RR")
             len_barr.append(byt & 0x7f)
         else:
-            len_barr.append(byt)
+            len_barr.append(byt & 0x7f)
             break
-    return int(codecs.encode(bytes(len_barr), 'hex'), 16)
+
+    return int(codecs.encode(bytes(reversed(len_barr)), 'hex'), 16)
 
 def read_len_from_bytes(array):
     len_barr = bytearray()

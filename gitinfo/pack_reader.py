@@ -70,9 +70,9 @@ def read_len(fin, byte0):
     # read the rest of the bytes of the length
     while(True):
         byt = struct.unpack('B', fin.read(1))[0]
-        print(byt)
+        
         if (byt & 0x80): # MSB is 1 we need to reread
-            print("RR")
+            
             len_barr.append(byt & 0x7f)
         else:
             len_barr.append(byt & 0x7f)
@@ -104,8 +104,6 @@ def decode_delta(fin, data, r, pack_idx, offset):
         
         offset = data[0]
         size = data[1]
-        print("KKK")
-        print(offset, size)
         
         r+=oo[offset:offset+size]
 

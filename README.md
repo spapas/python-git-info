@@ -79,6 +79,10 @@ use in any project.
 
 0.7.2
 
+* Remove debug
+
+0.7.2
+
 * Fix endianess bug
 
 0.7.1

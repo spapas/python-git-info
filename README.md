@@ -22,6 +22,10 @@ will return a dictionary with the following structure if everything works ok or
 `None` if something fishy happend or no `.git` folder was found:
 
 ```
+
+>> import gitinfo
+>> gitinfo.get_git_info()
+
   {
     'parent_commit': 'd54743b6e7cf9dc36354fe2907f2f415b9988198', 
     'message': 'commit: Small restructuring\n', 
@@ -31,6 +35,18 @@ will return a dictionary with the following structure if everything works ok or
     'author_date': '2018-11-14 13:52:34', 
     'commit': '9e1eec364ad24df153ca36d1da8405bb6379e03b'
   }
+
+```
+
+You can also use it directly from the command line, f.e to get the info from the current directory: `python -c "import gitinfo; print(gitinfo.get_git_info())"`.
+
+You can even do some funny stuff with jq if you convert that struct to json: 
+
+```
+
+python -c "import gitinfo, json; print(json.dumps(gitinfo.get_git_info()))" | jq .commit
+"92c76134aa108de6fcd39462ed2c9bc72fad4d01"
+
 ```
 
 ## How it works

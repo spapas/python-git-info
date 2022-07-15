@@ -12,9 +12,6 @@ on:
     tags:
       - '*.*.*'
 
-env:
-  DEFAULT_PYTHON: 3.10
-
 jobs:
   pypi:
     name: Publish to PyPI
@@ -26,7 +23,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ env.DEFAULT_PYTHON }}
+        python-version: "3.10"
 
     - name: Install dependencies and build
       run: |

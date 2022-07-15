@@ -93,6 +93,10 @@ use in any project.
 
 ## Changes
 
+0.7.4
+
+* Add gh action to deploy with tags
+
 0.7.3
 
 * Remove debug

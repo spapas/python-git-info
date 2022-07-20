@@ -26,6 +26,7 @@ def find_git_dir(directory):
 def get_head_commit(directory):
     "Retrieve the HEAD commit of this repo had"
     head_file = os.path.join(directory, "HEAD")
+    refs = None
     
     if not os.path.isfile(head_file):
         return
@@ -33,12 +34,11 @@ def get_head_commit(directory):
     head_parts = None
     
     if not os.path.isfile(head_file):
-        
         return
     
     with open(head_file, "r") as fh:
         data = fh.read().strip()
-        
+        refs = data
         try:
             head_parts = data.split(" ")[1].split("/")
         except IndexError:
@@ -53,11 +53,11 @@ def get_head_commit(directory):
     head_commit = None
     with open(head_ref_file, "r") as fl:
         head_commit = fl.read().strip()
-        return head_commit
+        return head_commit, refs
 
 
 def get_git_info_dir(directory):
-    head_commit = get_head_commit(directory)
+    head_commit, refs = get_head_commit(directory)
     
     if not head_commit:
         return
@@ -67,8 +67,11 @@ def get_git_info_dir(directory):
     head_message_file = os.path.join(
         directory, "objects", head_message_folder, head_message_filename
     )
+
+    if refs.startswith("ref: refs/heads/"):
+        refs = refs[len("ref: refs/heads/"):]
     
-    gi = {"commit": head_commit, "gitdir": directory, "message": ""}
+    gi = {"commit": head_commit, "gitdir": directory, "message": "", "refs": refs}
 
     if not os.path.isfile(head_message_file):
         # Here we open the snake bucket of idx+pack

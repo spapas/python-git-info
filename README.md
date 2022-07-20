@@ -33,7 +33,8 @@ will return a dictionary with the following structure if everything works ok or
     'commit_date': '2018-11-14 13:52:34', 
     'author': 'Serafeim <email@email.com>', 
     'author_date': '2018-11-14 13:52:34', 
-    'commit': '9e1eec364ad24df153ca36d1da8405bb6379e03b'
+    'commit': '9e1eec364ad24df153ca36d1da8405bb6379e03b',
+    'refs': 'master'
   }
 
 ```
@@ -48,6 +49,8 @@ python -c "import gitinfo, json; print(json.dumps(gitinfo.get_git_info()))" | jq
 "92c76134aa108de6fcd39462ed2c9bc72fad4d01"
 
 ```
+
+Notice that `refs` is the current branch.
 
 ## How it works
 
@@ -92,6 +95,10 @@ any external dependencies (not even `git`); making it very easy to install and
 use in any project.
 
 ## Changes
+
+0.7.5
+
+* Add current branch as `refs`
 
 0.7.4
 

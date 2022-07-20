@@ -1,5 +1,7 @@
 # python-git-info
 
+[![PyPi version](https://badge.fury.io/py/python-git-info.svg)](https://badge.fury.io/py/python-git-info)
+
 A very simple project to get information from the git repository of your project.
 This package does not have any dependencies; it reads directly the data from the
 .git repository.

@@ -98,6 +98,10 @@ use in any project.
 
 ## Changes
 
+0.7.6
+
+* Fix bug with get_head_commit
+
 0.7.5
 
 * Add current branch as `refs`

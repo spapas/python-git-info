@@ -29,12 +29,12 @@ def get_head_commit(directory):
     refs = None
     
     if not os.path.isfile(head_file):
-        return
+        return None, None
     
     head_parts = None
     
     if not os.path.isfile(head_file):
-        return
+        return None, None
     
     with open(head_file, "r") as fh:
         data = fh.read().strip()
@@ -43,13 +43,13 @@ def get_head_commit(directory):
             head_parts = data.split(" ")[1].split("/")
         except IndexError:
             # The head may contain just a commit so let's return it in that case:
-            return data
+            return data, refs
     if not head_parts:
         return
 
     head_ref_file = os.path.join(directory, *head_parts)
     if not os.path.isfile(head_ref_file):
-        return
+        return None, None
     head_commit = None
     with open(head_ref_file, "r") as fl:
         head_commit = fl.read().strip()

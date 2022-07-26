@@ -8,6 +8,10 @@ import zlib
 from .pack_reader import get_pack_info
 from .helpers import parse_git_message
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def find_git_dir(directory):
     "Find the correct git dir; move upwards if .git folder is not found here"
@@ -18,24 +22,23 @@ def find_git_dir(directory):
     parentdir = os.path.dirname(absdir)
     if absdir == parentdir:
         # We reached root and found no gitdir
+        logger.warning("No git dir found")
+
         return None
     return find_git_dir(parentdir)
-
 
 
 def get_head_commit(directory):
     "Retrieve the HEAD commit of this repo had"
     head_file = os.path.join(directory, "HEAD")
     refs = None
-    
-    if not os.path.isfile(head_file):
-        return None, None
-    
+
     head_parts = None
-    
+
     if not os.path.isfile(head_file):
+        logger.warning("Git repository is broken (wrong head file)")
         return None, None
-    
+
     with open(head_file, "r") as fh:
         data = fh.read().strip()
         refs = data
@@ -45,10 +48,12 @@ def get_head_commit(directory):
             # The head may contain just a commit so let's return it in that case:
             return data, refs
     if not head_parts:
-        return
+        logger.warning("Git repository is broken (no head parts)")
+        return None, None
 
     head_ref_file = os.path.join(directory, *head_parts)
     if not os.path.isfile(head_ref_file):
+        logger.warning("Git repository is broken (no head ref file)")
         return None, None
     head_commit = None
     with open(head_ref_file, "r") as fl:
@@ -58,8 +63,9 @@ def get_head_commit(directory):
 
 def get_git_info_dir(directory):
     head_commit, refs = get_head_commit(directory)
-    
+
     if not head_commit:
+        logger.warning("Git repository is broken (no head commit)")
         return
 
     head_message_folder = head_commit[:2]
@@ -69,8 +75,8 @@ def get_git_info_dir(directory):
     )
 
     if refs.startswith("ref: refs/heads/"):
-        refs = refs[len("ref: refs/heads/"):]
-    
+        refs = refs[len("ref: refs/heads/") :]
+
     gi = {"commit": head_commit, "gitdir": directory, "message": "", "refs": refs}
 
     if not os.path.isfile(head_message_file):
@@ -91,10 +97,8 @@ def get_git_info_dir(directory):
             # Retrieve the null_byte_idx and start from there
             null_byte_idx = data.index(b"\x00") + 1
             data = data[null_byte_idx:]
-            
-            return parse_git_message(data, gi)
 
-        
+            return parse_git_message(data, gi)
 
 
 def get_git_info(dir=os.getcwd()):

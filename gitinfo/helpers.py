@@ -2,8 +2,8 @@ import time
 
 
 def parse_commiter_line(line):
-    #print(line)
-    #print("~")
+    # print(line)
+    # print("~")
     "Parse the commiter/author line which also contains a datetime"
     parts = line.split()
     # TODO: I'll ignore tz for now It is parts[:-1]
@@ -28,8 +28,8 @@ def parse_git_message(data, gi):
 
         if reading_msg == True:
             gi["message"] += l
-            if not l and idx < len(lines)-1:
-                gi['message']+='\n'
+            if not l and idx < len(lines) - 1:
+                gi["message"] += "\n"
 
         if l.startswith("tree"):
             gi["tree"] = l.split()[1]

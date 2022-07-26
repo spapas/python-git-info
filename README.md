@@ -98,6 +98,13 @@ use in any project.
 
 ## Changes
 
+0.8.0
+
+* Add logging output for errors
+* Use black to format files
+
+* Fix bug with get_head_commit
+
 0.7.6
 
 * Fix bug with get_head_commit

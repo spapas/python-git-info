@@ -99,7 +99,6 @@ def read_len_from_bytes(array):
 
 def decode_delta(fin, data, r, pack_idx, offset):
     d0 = data[0]
-    a += 1
     if d0 & 0x80:
         # Copy data from other object
         oo = get_object(fin, pack_idx - offset)

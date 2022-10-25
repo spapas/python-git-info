@@ -98,6 +98,10 @@ use in any project.
 
 ## Changes
 
+0.8.1
+
+* Fix bug in decode_delta
+
 0.8.0
 
 * Add logging output for errors

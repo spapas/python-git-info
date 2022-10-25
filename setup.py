@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name="python-git-info",
-    version="0.8.0",
+    version="0.8.1",
     description="Get git information repository, directly from .git",
     author="Serafeim Papastefanos",
     author_email="spapas@gmail.com",

@@ -98,6 +98,10 @@ use in any project.
 
 ## Changes
 
+0.8.2
+
+* Try the pypi github action
+
 0.8.1
 
 * Fix bug in decode_delta

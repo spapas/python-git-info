@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="python-git-info",
-    version="0.8.1",
+    version="0.8.2",
     description="Get git information repository, directly from .git",
     author="Serafeim Papastefanos",
     author_email="spapas@gmail.com",

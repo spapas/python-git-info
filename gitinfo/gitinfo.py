@@ -50,10 +50,27 @@ def get_head_commit(directory):
     if not head_parts:
         logger.warning("Git repository is broken (no head parts)")
         return None, None
-
+    print(head_parts)
     head_ref_file = os.path.join(directory, *head_parts)
+    print(head_ref_file)
     if not os.path.isfile(head_ref_file):
         logger.warning("Git repository is broken (no head ref file)")
+        # Try to find it on the remotes ?
+        bname = head_parts[-1]
+        print(bname)
+        remotes_dir = os.path.join(directory, "refs", "remotes")
+        print(remotes_dir)
+        remotes = os.listdir(remotes_dir)
+        for r in remotes:
+            print(r)
+            remote_branch_file = os.path.join(remotes_dir, r, bname)
+            print(remote_branch_file)
+            if os.path.isfile(remote_branch_file):
+                with open(remote_branch_file, "r") as fl:
+                    head_commit = fl.read().strip()
+                    return head_commit, refs
+
+
         return None, None
     head_commit = None
     with open(head_ref_file, "r") as fl:

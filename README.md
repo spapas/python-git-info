@@ -98,6 +98,10 @@ use in any project.
 
 ## Changes
 
+0.8.3
+
+* Make it work with empty head refs
+
 0.8.2
 
 * Try the pypi github action
